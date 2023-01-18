@@ -7,8 +7,8 @@ this will be a youtube bot someday
 - `py src\main.py`
 
 ## setup bot
-**environments**
+### environments
 rename `.env.example` to `.env` with your credentials
 
-**instagram account**
+### instagram account
 bot needs an instagram account following target accounts that will be used as memes source
