@@ -1,6 +1,6 @@
 import datetime
 import dateutil.relativedelta
-import instaloader
+from instaloader import Instaloader, Profile
 
 from announcements_terms import get_annoucements_terms
 
@@ -15,7 +15,10 @@ class InstagramDownloader:
 
     def load_session(self):
         print('loading session...')
-        self.loader = instaloader.Instaloader()
+
+        pattern = '@{profile}---{filename}'
+
+        self.loader = Instaloader(filename_pattern=pattern)
         self.loader.load_session_from_file(self.instagram_user)
 
     def download_last_memes(self, days):
@@ -24,7 +27,7 @@ class InstagramDownloader:
         today = datetime.date.today()
         limit_date = today - dateutil.relativedelta.relativedelta(days=days)
 
-        profile = instaloader.Profile.from_username(
+        profile = Profile.from_username(
             self.loader.context, self.instagram_user)
 
         for follower in profile.get_followees():
@@ -36,7 +39,6 @@ class InstagramDownloader:
 
                 is_video = post.get_is_videos()
                 if is_video[0] and not self.text_contains_announcements(post.caption):
-                    print('  downloading media ' + str(post.mediaid))
                     self.loader.download_post(
                         post, target=self.temp_folder)
                     print('')
