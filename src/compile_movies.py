@@ -16,29 +16,14 @@ class CompileMovies:
         print('starting compilation process...')
 
         videos_to_add = self.get_videos()
-
         videos_added = []
-
         video_duration = 0
 
         while videos_to_add and video_duration <= self.compilation_max_duration:
-            selecting_video = True
-            video = None
+            video = self.select_video(videos_to_add, videos_added)
 
-            while selecting_video:
-                video = random.choice(videos_to_add)
-
-                if video.duration > self.video_max_duration:
-                    videos_to_add.remove(video)
-                    continue
-
-                if not videos_added:
-                    selecting_video = False
-                else:
-                    if video.instagram_account != videos_added[-1].instagram_account:
-                        selecting_video = False
-                    elif len(videos_to_add) == 1:
-                        videos_to_add.remove(video)
+            if not video:
+                continue
 
             print('adding video ' + video.file_name)
             videos_to_add.remove(video)
@@ -57,6 +42,26 @@ class CompileMovies:
         compiled_video.write_videofile('youtube/compiled_video.mp4')
 
         return videos_added
+
+    def select_video(self, videos_to_add, videos_added):
+        selecting_video = True
+        video = None
+
+        while selecting_video and videos_to_add:
+            video = random.choice(videos_to_add)
+
+            if video.duration > self.video_max_duration:
+                videos_to_add.remove(video)
+                continue
+
+            if not videos_added:
+                selecting_video = False
+            else:
+                if video.instagram_account != videos_added[-1].instagram_account:
+                    selecting_video = False
+                elif len(videos_to_add) == 1:
+                    videos_to_add.remove(video)
+        return video
 
     def get_videos(self):
         paths = glob(self.temp_folder + '/*.mp4')
