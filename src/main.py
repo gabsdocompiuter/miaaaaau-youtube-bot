@@ -51,7 +51,10 @@ def get_seconds_in_minutes(seconds):
     td = str(timedelta(seconds=seconds))
     td_splited = td.split(':')
 
-    return td_splited[1] + ':' + td_splited[2]
+    min = td_splited[1]
+    sec = td_splited[2].split('.')[0]
+
+    return min + ':' + sec
 
 
 if __name__ == '__main__':
