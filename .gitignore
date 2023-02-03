@@ -1,3 +1,5 @@
 .env
+youtube_credentials.json
+youtube_token.json
 
 __pycache__

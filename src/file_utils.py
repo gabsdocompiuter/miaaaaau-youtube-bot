@@ -10,8 +10,8 @@ def delete_trash_files(temp_folder):
     delete_files(trash_list)
 
 
-def delete_temp_files(temp_folder):
-    file_list = glob(temp_folder + '/*')
+def delete_folder_files(folder):
+    file_list = glob(folder + '/*')
 
     delete_files(file_list)
 

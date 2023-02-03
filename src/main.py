@@ -1,8 +1,8 @@
 from compile_movies import CompileMovies
 from datetime import timedelta
 from dotenv import load_dotenv
-from file_utils import delete_trash_files, delete_temp_files
 from instagram_downloader import InstagramDownloader
+from youtube_uploader import YoutubeUploader
 
 import os
 import file_utils
@@ -14,11 +14,10 @@ def main():
     load_dotenv()
     instagram_user = os.environ.get('instagram_username')
     instagram_pass = os.environ.get('instagram_password')
+
     video_max_duration = os.environ.get('video_max_duration')
     compilation_max_duration = os.environ.get('compilation_max_duration')
     temp_folder = os.environ.get('temp_folder')
-
-    delete_temp_files(temp_folder)
 
     scraper = InstagramDownloader(instagram_user, instagram_pass, temp_folder)
     scraper.download_last_memes(days=1)
@@ -29,9 +28,20 @@ def main():
                              compilation_max_duration=compilation_max_duration)
     videos_added = compiler.compile_videos()
 
-    print(create_description(videos_added))
+    if not videos_added:
+        return
 
-    # upload to youtube
+    uploader = YoutubeUploader()
+
+    video_file = 'youtube/compiled_video.mp4'
+    title = 'BEST CATS VIDEOS COMPILED'
+    description = create_description(videos_added)
+    tags = ['cats', 'funny cats', 'compiled cats']
+
+    uploader.upload_video(video_file, title, description, tags)
+
+    file_utils.delete_folder_files(temp_folder)
+    file_utils.delete_folder_files('youtube')
 
 
 def create_description(videos_added):
