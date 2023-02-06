@@ -12,3 +12,4 @@ rename `.env.example` to `.env` with your credentials
 
 ### instagram account
 bot needs an instagram account following target accounts that will be used as memes source
+`instaloader --login USERNAME`

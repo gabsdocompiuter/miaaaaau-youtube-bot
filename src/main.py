@@ -1,6 +1,6 @@
 from compile_movies import CompileMovies
 from datetime import timedelta
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv, set_key
 from instagram_downloader import InstagramDownloader
 from youtube_uploader import YoutubeUploader
 
@@ -14,18 +14,25 @@ def main():
     load_dotenv()
     instagram_user = os.environ.get('instagram_username')
     instagram_pass = os.environ.get('instagram_password')
-
-    video_max_duration = os.environ.get('video_max_duration')
-    compilation_max_duration = os.environ.get('compilation_max_duration')
+    video_max_duration = int(os.environ.get('video_max_duration'))
+    compilation_max_duration = int(os.environ.get('compilation_max_duration'))
     temp_folder = os.environ.get('temp_folder')
+    youtube_folder = os.environ.get('youtube_folder')
+    video_title = os.environ.get('video_title')
+    how_many_days_to_search = int(os.environ.get('how_many_days_to_search'))
+    video_tags = os.environ.get('video_tags').split(';')
+    video_number = int(os.environ.get('video_number'))
+
+    file_utils.delete_folder_files(temp_folder)
 
     scraper = InstagramDownloader(instagram_user, instagram_pass, temp_folder)
-    scraper.download_last_memes(days=1)
+    scraper.download_last_memes(days=how_many_days_to_search)
     file_utils.delete_trash_files(temp_folder)
 
     compiler = CompileMovies(temp_folder=temp_folder,
                              video_max_duration=video_max_duration,
-                             compilation_max_duration=compilation_max_duration)
+                             compilation_max_duration=compilation_max_duration,
+                             youtube_folder=youtube_folder)
     videos_added = compiler.compile_videos()
 
     if not videos_added:
@@ -33,15 +40,15 @@ def main():
 
     uploader = YoutubeUploader()
 
-    video_file = 'youtube/compiled_video.mp4'
-    title = 'BEST CATS VIDEOS COMPILED'
+    video_file = f'{youtube_folder}/compiled_video.mp4'
     description = create_description(videos_added)
-    tags = ['cats', 'funny cats', 'compiled cats']
+    title = f'{video_title} #{video_number}'
 
-    uploader.upload_video(video_file, title, description, tags)
+    uploader.upload_video(video_file, title, description, video_tags)
 
+    set_key(find_dotenv(), 'video_number', str(video_number + 1))
     file_utils.delete_folder_files(temp_folder)
-    file_utils.delete_folder_files('youtube')
+    file_utils.delete_folder_files(youtube_folder)
 
 
 def create_description(videos_added):

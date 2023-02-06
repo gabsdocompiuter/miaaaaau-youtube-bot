@@ -5,10 +5,11 @@ import random
 
 
 class CompileMovies:
-    def __init__(self, temp_folder, video_max_duration, compilation_max_duration):
+    def __init__(self, temp_folder, video_max_duration, compilation_max_duration, youtube_folder):
         self.temp_folder = temp_folder
-        self.video_max_duration = int(video_max_duration)
-        self.compilation_max_duration = int(compilation_max_duration)
+        self.video_max_duration = video_max_duration
+        self.compilation_max_duration = compilation_max_duration
+        self.youtube_folder = youtube_folder
         self.__clips = []
 
     def compile_videos(self):
@@ -38,8 +39,10 @@ class CompileMovies:
 
         print('compiling')
         compiled_video = concatenate_videoclips(
-            self.__clips, method='compose', padding=0.3)
-        compiled_video.write_videofile('youtube/compiled_video.mp4')
+            self.__clips, method='compose')
+
+        compiled_video.write_videofile(
+            f'{self.youtube_folder}/compiled_video.mp4')
 
         return videos_added
 

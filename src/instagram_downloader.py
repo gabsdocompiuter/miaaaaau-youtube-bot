@@ -33,15 +33,18 @@ class InstagramDownloader:
         for follower in profile.get_followees():
             print('scraping from ' + follower.username)
 
-            for post in follower.get_posts():
-                if post.date_local.date() < limit_date:
-                    break
+            try:
+                for post in follower.get_posts():
+                    if post.date_local.date() < limit_date:
+                        break
 
-                is_video = post.get_is_videos()
-                if is_video[0] and not self.text_contains_announcements(post.caption):
-                    self.loader.download_post(
-                        post, target=self.temp_folder)
-                    print('')
+                    is_video = post.get_is_videos()
+                    if is_video[0] and not self.text_contains_announcements(post.caption):
+                        self.loader.download_post(
+                            post, target=self.temp_folder)
+                        print('')
+            except:
+                print(f'error searching {follower.username} posts')
             print('')
 
     def text_contains_announcements(self, text):
